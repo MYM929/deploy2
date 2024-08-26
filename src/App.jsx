@@ -215,7 +215,7 @@ function App() {
 
   return (
     <>
-      <ToastContainer position="bottom-right" autoClose={3000}/>
+      <ToastContainer position="bottom-right" autoClose={3000} style={{ width: "335px" }}/>
       
 
       {/* <button onClick={() => scrollToSection(section2Ref)}>Go to Section 2</button> */}
