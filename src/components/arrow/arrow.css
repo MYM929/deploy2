@@ -1,0 +1,87 @@
+
+
+#mouse-scroll {
+  position: relative;
+  margin-top: 0px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0.25; /* Set the opacity to 0.5 */
+}
+
+#mouse-scroll span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border-right: 2px solid var(--primary-color); /* Pink color: right half of the arrow */
+  border-bottom: 2px solid var(--primary-color); /* Pink color: left half of the arrow */
+  margin: 0 0 0px 0;
+}
+
+#mouse-scroll .mouse {
+  height: 21px;
+  width: 14px;
+  border-radius: 10px;
+  border: 2px solid var(--primary-color); /* Pink color: oval shape*/
+  margin-top: 10px;
+}
+
+#mouse-scroll .down-arrow-1 {
+  margin-top: 6px;
+}
+
+#mouse-scroll .down-arrow-1, #mouse-scroll .down-arrow-2, #mouse-scroll .down-arrow-3 {
+  animation: mouse-scroll 1s infinite;
+}
+
+#mouse-scroll .down-arrow-1 {
+  animation-delay: .1s;
+  animation-direction: alternate;
+}
+
+#mouse-scroll .down-arrow-2 {
+  animation-delay: .2s;
+  animation-direction: alternate;
+}
+
+#mouse-scroll .down-arrow-3 {
+  animation-delay: .3s;
+  animation-direction: alternate;
+}
+
+#mouse-scroll .mouse-in {
+  height: 5px;
+  width: 2px;
+  display: block;
+  margin: 5px auto;
+  background: var(--primary-color); /* Pink color: vertical bar */
+  position: relative;
+  animation: animated-mouse 1.2s ease infinite;
+}
+
+@keyframes animated-mouse {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes mouse-scroll {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+

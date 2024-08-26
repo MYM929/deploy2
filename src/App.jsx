@@ -9,6 +9,9 @@ import s3_1 from './assets/section3/section3_1.jpg';
 import s3_2 from './assets/section3/section3_2.jpg';
 import s3_3 from './assets/section3/section3_3.jpg';
 import s4_1 from './assets/section4/section4_1.jpg';
+import explosion0 from './assets/sounds/explosion0.mp3'
+import explosion1 from './assets/sounds/explosion1.mp3'
+import explosion2 from './assets/sounds/explosion2.mp3'
 
 /////////////////////////////////////////////////////////////////////
 import { ToastContainer, toast } from 'react-toastify';
@@ -16,6 +19,10 @@ import { db } from './firebase/firebase';
 import { doc, getDoc, setDoc, collection } from 'firebase/firestore';
 import { getDownloadURL, ref } from "firebase/storage";
 import { storage } from "./firebase/firebase"; 
+
+import { Fireworks } from 'fireworks-js'
+
+import Arrow from './components/arrow/arrow.jsx';
 
 
 function App() {
@@ -28,9 +35,12 @@ function App() {
   const section3Ref = useRef(null);
   const section4Ref = useRef(null);
   const section5Ref = useRef(null);
+  const fireworksRef = useRef(null);
+
+
   const [wish, setWish] = useState('');
   const [videoUrl, setVideoUrl] = useState("");
-  
+
 
 
   const gifStyle = {
@@ -78,6 +88,12 @@ function App() {
   };
 
   const handleSubmitWish = async () => {
+
+    if (wish.trim() === '') {
+      toast.error("Wish cannot be empty.");
+      return;
+    }
+
     try {
       const ref = doc(collection(db, "wishes"));
   
@@ -85,8 +101,42 @@ function App() {
         wish: wish,
         timestamp: new Date(),
       });
-      toast.success("Your wish has been stored");
+      toast.success("Your wish will come true soon");
       setWish('');
+
+      // Clear the previous fireworks instance
+      if (fireworksRef.current) {
+        fireworksRef.current.innerHTML = ''; 
+      }
+
+      const fireworks = new Fireworks(fireworksRef.current, {
+        autoresize: true,
+        opacity: 0.5,
+        acceleration: 1.05,
+        friction: 0.98,
+        gravity: 1.5,
+        particles: 50,
+        trace: 3,
+        explosion: 5,
+        brightness: { min: 50, max: 80 },
+        sound: {
+          enabled: true,
+          files: [
+            explosion0,
+            explosion1,
+            explosion2,
+          ],
+          volume: {
+            min: 4,
+            max: 35
+          }
+        }
+      });
+      fireworks.start();
+
+      setTimeout(() => {
+        fireworks.stop(); 
+      }, 15000);
     } 
     catch (error) {
       toast.error(error.message);
@@ -163,13 +213,10 @@ function App() {
 
 
 
-
-
-
-
   return (
     <>
       <ToastContainer position="bottom-right" autoClose={3000}/>
+      
 
       {/* <button onClick={() => scrollToSection(section2Ref)}>Go to Section 2</button> */}
       {/* <div>
@@ -177,41 +224,48 @@ function App() {
         <p>Scroll Method: {scrollMethod}</p>
         <p>Try scrolling using both a mouse and a touchpad!</p>
       </div> */}
+     
 
       <div className="flex flex-col relative">
         {/* Section 1 */}
-        <section ref={section1Ref} className="h-screen bg-red-100 flex flex-col items-center justify-center relative">
+        <section id="section1" ref={section1Ref} className="h-screen bg-red-100 flex flex-col items-center justify-center relative">
           <img src={recordGif} alt="Music Record" style={gifStyle} />
-          <h1 className="text-4xl font-bold mt-4">
+          <h1 className="mt-4 text-4xl font-bold">
             This beautiful, elegant, and smart lady is turning 21 <br />
-            <span className="block text-center mt-4">Look at how happy she is !!!</span>
+            <span className="block text-center mt-3">Look at how happy she is !!!</span>
           </h1>
-          <img src={s1_1} alt="Section 1" className="rounded-2xl w-1/3 mt-5" />
+          <img src={s1_1} alt="Section 1" className="rounded-2xl mt-5" style={{ width: '30%' }}/>
           <button
             onClick={handlePlayVideo}
-            className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            className="mt-2 bg-white bg-opacity-30 backdrop-blur-lg text-pink-400 text-lg font-semibold px-8 py-3 rounded-full shadow-xl hover:bg-opacity-40 hover:shadow-2xl transform hover:scale-105 transition-all duration-300 ease-in-out border border-white"
           >
             Click to receive surprise
           </button>
+
+
+
+          <Arrow color="#ff0000"/>
         </section>
+        
 
 
 
         {/* Section 2 */}
-        <section ref={section2Ref} className="h-screen bg-yellow-100 flex flex-col items-center justify-center relative">
+        <section id="section2" ref={section2Ref} className="h-screen bg-yellow-100 flex flex-col items-center justify-center relative">
           <img src={recordGif} alt="Music Record" style={gifStyle} />
-          <h1 className="text-4xl font-bold mt-4 mb-8">Look at what you have accomplished</h1>
-          <div className="flex flex-row justify-center space-x-4">
+          <h1 className="text-4xl font-bold mb-8">Look at what you have accomplished</h1>
+          <div className="flex flex-row justify-center space-x-4 mb-4">
             <img src={s2_1} alt="Accomplishment 1" className="rounded-lg w-1/4" />
             <img src={s2_2} alt="Accomplishment 2" className="rounded-lg w-1/4" />
             <img src={s2_3} alt="Accomplishment 3" className="rounded-lg w-1/4" />
           </div>
+          <Arrow color="#ff0000"/>
         </section>
 
 
 
         {/* Section 3 */}
-        <section ref={section3Ref} className="h-screen bg-green-100 flex flex-col items-center justify-center relative">
+        <section id="section3" ref={section3Ref} className="h-screen bg-green-100 flex flex-col items-center justify-center relative">
           <img src={recordGif} alt="Music Record" style={gifStyle} />
           <h1 className="text-4xl font-bold mt-4">
             You have been to NY, MA, PA, FL, DC... <br />
@@ -222,34 +276,37 @@ function App() {
             <img src={s3_2} alt="Travel 2" className="rounded-lg w-1/4" />
             <img src={s3_3} alt="Travel 3" className="rounded-lg w-1/4" />
           </div>
+          <Arrow color="#ff0000"/>
         </section>
 
 
 
         {/* Section 4 */}
-        <section ref={section4Ref} className="h-screen bg-blue-100 flex flex-col items-center justify-center relative">
+        <section id="section4" ref={section4Ref} className="h-screen bg-black flex flex-col items-center justify-center relative">
+          <div ref={fireworksRef} className="absolute inset-0 z-0"></div>
           <img src={recordGif} alt="Music Record" style={gifStyle} />
-          <h1 className="text-4xl font-bold mt-4">Happy Birthday To The Princess Celina Li !!!</h1>
-          <img src={s4_1} alt="Section 4" className="rounded-2xl w-1/3 mt-10" />
+          <h1 className="text-blue-300 text-4xl font-bold mt-4">Happy Birthday To The Princess Celina Li !!!</h1>
+          <img src={s4_1} alt="Section 4" className="rounded-2xl w-1/3 mt-10 z-10" />
           <input
             type="text"
             value={wish}
             onChange={handleWishChange}
             placeholder="Write down your wish"
-            className="mt-8 p-2 border border-gray-300 rounded w-1/3 text-center"
+            className="mt-8 p-2 border border-gray-300 rounded w-1/3 text-center z-10"
           />
           <button
             onClick={handleSubmitWish}
-            className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            className="mt-4 bg-pink-400 text-white text-base px-6 py-2 rounded-full hover:bg-pink-500 z-10"
           >
             Submit
           </button>
+          <Arrow color="#ff0000"/>
         </section>
 
 
 
         {/* Section 5 */}
-        <section ref={section5Ref} className="h-screen bg-purple-100 flex flex-col items-center relative">
+        <section id="section5" ref={section5Ref} className="h-screen bg-purple-100 flex flex-col items-center relative">
           <img src={recordGif} alt="Music Record" style={gifStyle} />
           <h1 className="text-4xl font-bold mt-20">Guess who is playing the background music?</h1>
           <video ref={videoRef} src={videoUrl} type="video/mp4" width="100%" height="auto" className="max-w-3xl mt-10" controls loop>
