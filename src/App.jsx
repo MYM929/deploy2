@@ -101,7 +101,7 @@ function App() {
         wish: wish,
         timestamp: new Date(),
       });
-      toast.success("Your wish will come true soon");
+      toast.success("Your wish will come true very soon");
       setWish('');
 
       // Clear the previous fireworks instance
